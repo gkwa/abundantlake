@@ -17,9 +17,17 @@ func TestPandocFilters(t *testing.T) {
 		expected string
 	}{
 		{
-			name:     "RemoveEmphasisFromLink",
-			input:    strings.TrimSpace(`I like [*Google* Search](https://google.com)`),
-			expected: `I like [Google Search](https://google.com)`,
+			name: "RemoveEmphasisFromLink",
+			input: `
+			
+			I like [*Google* Search](https://google.com)
+			
+			`,
+			expected: `
+			
+			I like [Google Search](https://google.com)
+			
+			`,
 		},
 		{
 			name:     "Multiple spaces are squeezed",
@@ -201,7 +209,7 @@ This is a 🌟 test. [They call this drug eggs in Korea because these are so add
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			output, err := applyPandocFilter(strings.TrimSpace(tt.input), "remove_emphasis.lua")
+			output, err := applyPandocFilter(tt.input, "remove_emphasis.lua")
 			if err != nil {
 				t.Fatalf("failed to apply Pandoc filter for test '%s': %v", tt.name, err)
 			}
@@ -217,7 +225,7 @@ This is a 🌟 test. [They call this drug eggs in Korea because these are so add
 			output = strings.ReplaceAll(output, "\\|", "|")
 
 			if output != strings.TrimSpace(tt.expected) {
-				diff := generateDiff(strings.TrimSpace(tt.input), strings.TrimSpace(tt.expected), output)
+				diff := generateDiff(tt.input, tt.expected, output)
 				t.Errorf("test '%s' failed.\nDiff:\n%s", tt.name, diff)
 			}
 		})
@@ -233,7 +241,7 @@ func applyPandocFilter(input, filterPath string) (string, error) {
 		"--lua-filter="+filterPath,
 	)
 
-	cmd.Stdin = strings.NewReader(input)
+	cmd.Stdin = strings.NewReader(strings.TrimSpace(input))
 	var out, errOut bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &errOut

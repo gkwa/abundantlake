@@ -69,4 +69,3 @@ function utf8_to_codepoint(utf8_char)
         return (byte1 - 240) * 262144 + (byte2 - 128) * 4096 + (byte3 - 128) * 64 + (byte4 - 128)
     end
 end
-
