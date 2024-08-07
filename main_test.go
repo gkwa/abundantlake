@@ -205,6 +205,65 @@ This is a 🌟 test. [They call this drug eggs in Korea because these are so add
 
 `,
 		},
+		{
+			name: "Code block",
+			input: `
+
+Usage:
+
+` + "```" + `bash
+git clone https://github.com/gkwa/abundantlake.git
+cd abundantlake
+go test ./...
+` + "```" + `
+
+
+`,
+			expected: `
+
+Usage:
+
+` + "``` " + `bash
+git clone https://github.com/gkwa/abundantlake.git
+cd abundantlake
+go test ./...
+` + "```" + `
+
+`,
+		},
+
+		
+		{
+			name: "Code block with link",
+			input: `
+
+[readme | **the** information source](https://readme.com)
+
+Usage:
+
+` + "```" + `bash
+git clone https://github.com/gkwa/abundantlake.git
+cd abundantlake
+go test ./...
+` + "```" + `
+
+
+`,
+			expected: `
+
+[readme | the information source](https://readme.com)
+
+Usage:
+
+` + "``` " + `bash
+git clone https://github.com/gkwa/abundantlake.git
+cd abundantlake
+go test ./...
+` + "```" + `
+
+`,
+		},
+
 	}
 
 	for _, tt := range tests {
