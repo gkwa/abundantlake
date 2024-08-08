@@ -183,6 +183,18 @@ This is a 🌟 test. [They call this drug eggs in Korea because these are so add
       `,
 		},
 		{
+			name: "xxxx",
+			input: `
+
+https://example.com
+
+`,
+			expected: `
+https://example.com
+
+`,
+		},
+		{
 			name: "Obsidian links",
 			input: `
 
