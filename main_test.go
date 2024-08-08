@@ -183,7 +183,7 @@ This is a 🌟 test. [They call this drug eggs in Korea because these are so add
       `,
 		},
 		{
-			name: "xxxx",
+			name: "Bare link is wrapped as expected",
 			input: `
 
 https://example.com
