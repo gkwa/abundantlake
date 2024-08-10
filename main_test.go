@@ -195,6 +195,7 @@ https://example.com
 
 `,
 		},
+
 		{
 			name: "Obsidian links",
 			input: `
@@ -244,6 +245,34 @@ go test ./...
 
 `,
 		},
+
+
+
+		{
+
+			name: "Bare link is left alone inside code block",
+			input: `
+
+Usage:
+
+` + "```" + ` bash
+git clone https://github.com/gkwa/abundantlake.git
+` + "```" + `
+
+
+`,
+			expected: `
+
+Usage:
+
+` + "```" + ` bash
+git clone https://github.com/gkwa/abundantlake.git
+` + "```" + `
+
+`,
+		},
+
+
 
 		{
 			name: "Code block with link",
