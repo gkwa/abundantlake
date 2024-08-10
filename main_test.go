@@ -190,6 +190,7 @@ https://example.com
 
 `,
 			expected: `
+
 https://example.com
 
 `,
@@ -244,7 +245,6 @@ go test ./...
 `,
 		},
 
-		
 		{
 			name: "Code block with link",
 			input: `
@@ -275,7 +275,6 @@ go test ./...
 
 `,
 		},
-
 	}
 
 	for _, tt := range tests {
@@ -289,6 +288,10 @@ go test ./...
 				t.Fatalf("failed to apply Pandoc filter for test '%s': %v", tt.name, err)
 			}
 			output, err = applyPandocFilter(output, "trim_link_names.lua")
+			if err != nil {
+				t.Fatalf("failed to apply Pandoc filter for test '%s': %v", tt.name, err)
+			}
+			output, err = applyPandocFilter(output, "link.lua")
 			if err != nil {
 				t.Fatalf("failed to apply Pandoc filter for test '%s': %v", tt.name, err)
 			}
