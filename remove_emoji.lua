@@ -15,7 +15,7 @@ function Link(el)
                     return trimmed
                 end
             end)
-            new_text = new_text:gsub("%s+", " ")
+            new_text = new_text:gsub("%s+", " "):gsub("%s+$", "")
             if new_text ~= "" then
                 table.insert(new_content, pandoc.Str(new_text))
             end
@@ -54,8 +54,9 @@ function is_emoji(code_point)
         (code_point >= 0x1F600 and code_point <= 0x1F64F) or -- Emoticons
         (code_point >= 0x1F300 and code_point <= 0x1F5FF) or -- Miscellaneous Symbols and Pictographs
         (code_point >= 0x1F680 and code_point <= 0x1F6FF) or -- Transport and Map Symbols
-        (code_point >= 0x1F900 and code_point <= 0x1F9FF) or -- Supplemental Symbols and Pictographs
-        (code_point >= 0x1FA70 and code_point <= 0x1FAFF)   -- Symbols and Pictographs Extended-A
+        (code_point >= 0x1F900 and code_point <= 0x1F9FF) or -- Symbols and Pictographs Extended-A
+        (code_point >= 0x1FA70 and code_point <= 0x1FAFF) or -- Symbols and Pictographs Extended-A
+        (code_point == 0x200D) -- Zero Width Joiner
     )
 end
 

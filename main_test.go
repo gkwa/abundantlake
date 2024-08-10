@@ -138,15 +138,40 @@ I like [Google Search](https://google.com)
 			input: `
       
       Check out this 😀 [😀 Awesome 🎉 Link 🌟](https://example.com) 🎉
-      
+
       `,
 			expected: `
       
-      Check out this 😀 [Awesome Link](https://example.com) 🎉
+Check out this 😀 [Awesome Link](https://example.com) 🎉
       
       `,
 		},
+		{
+			name: "Remove multiple emojis from link text only",
+			input: `
+      
+      Check out this 😀 [😀 Awesome Link 🎉 and things 😀](https://example.com) 🎉
 
+      `,
+			expected: `
+      
+Check out this 😀 [Awesome Link and things](https://example.com) 🎉
+      
+      `,
+		},
+		{
+			name: "Remove multiple emojis from link text only 2",
+			input: `
+      
+[Testing in Go: Golden Files · Ilija Eftimov 👨‍🚀](https://ieftimov.com)
+
+      `,
+			expected: `
+      
+[Testing in Go: Golden Files · Ilija Eftimov](https://ieftimov.com)
+
+      `,
+		},
 		{
 			name: "Preserve emojis outside links",
 			input: `
