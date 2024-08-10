@@ -215,8 +215,6 @@ https://example.com
 
 [[xxx^section|alias]]			
 
-
-
 `,
 		},
 		{
@@ -231,7 +229,6 @@ cd abundantlake
 go test ./...
 ` + "```" + `
 
-
 `,
 			expected: `
 
@@ -245,11 +242,7 @@ go test ./...
 
 `,
 		},
-
-
-
 		{
-
 			name: "Bare link is left alone inside code block",
 			input: `
 
@@ -258,7 +251,6 @@ Usage:
 ` + "```" + ` bash
 git clone https://github.com/gkwa/abundantlake.git
 ` + "```" + `
-
 
 `,
 			expected: `
@@ -271,9 +263,6 @@ git clone https://github.com/gkwa/abundantlake.git
 
 `,
 		},
-
-
-
 		{
 			name: "Code block with link",
 			input: `
@@ -287,7 +276,6 @@ git clone https://github.com/gkwa/abundantlake.git
 cd abundantlake
 go test ./...
 ` + "```" + `
-
 
 `,
 			expected: `
