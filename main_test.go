@@ -199,6 +199,61 @@ This is a 🌟 test. [They call this drug eggs in Korea because these are so add
 `,
 		},
 		{
+			name: "Typical markdown notes test",
+			input: `
+
+
+[[leadyspleen]]
+
+[Character encoding: iconv -t utf-8 input.txt | pandoc | iconv -f utf-8](https://pandoc.org/chunkedhtml-demo/2.3-character-encoding.html)
+
+run container without docker on macos
+
+[Stream: Go 10 Week Backend Eng Onboarding](https://stream-wiki.notion.site/Stream-Go-10-Week-Backend-Eng-Onboarding-625363c8c3684753b7f2b7d829bcd67a)
+
+[What is Bun?](https://bun.uptrace.dev/guide/)
+
+[Go errors.Is now includes a nil check. | by the korean guy | Jul, 2024 | Medium](https://medium.com/@ojh031/go-errors-is-now-includes-a-nil-check-94f82fe4cc31)
+
+[darrenburns/posting: The modern API client that lives in your terminal](https://github.com/darrenburns/posting?tab=readme-ov-file#posting)
+
+[NewStore TechTalk - Advanced Testing with Go by Mitchell Hashimoto - YouTube](https://www.youtube.com/watch?v=yszygk1cpEc)
+
+https://www.google.com/search?q=how+to+make+refried+beans
+
+https://www.google.com/search?q=how+to+make+vegitarian+refried+beans
+
+https://www.google.com/search?q=how+to+make+vegitarian+refried+beans
+
+      `,
+			expected: `
+
+[[leadyspleen]]
+
+[Character encoding: iconv -t utf-8 input.txt | pandoc | iconv -f utf-8](https://pandoc.org/chunkedhtml-demo/2.3-character-encoding.html)
+
+run container without docker on macos
+
+[Stream: Go 10 Week Backend Eng Onboarding](https://stream-wiki.notion.site/Stream-Go-10-Week-Backend-Eng-Onboarding-625363c8c3684753b7f2b7d829bcd67a)
+
+[What is Bun?](https://bun.uptrace.dev/guide/)
+
+[Go errors.Is now includes a nil check. | by the korean guy | Jul, 2024 | Medium](https://medium.com/@ojh031/go-errors-is-now-includes-a-nil-check-94f82fe4cc31)
+
+[darrenburns/posting: The modern API client that lives in your terminal](https://github.com/darrenburns/posting?tab=readme-ov-file#posting)
+
+[NewStore TechTalk - Advanced Testing with Go by Mitchell Hashimoto - YouTube](https://www.youtube.com/watch?v=yszygk1cpEc)
+
+https://www.google.com/search?q=how+to+make+refried+beans
+
+https://www.google.com/search?q=how+to+make+vegitarian+refried+beans
+
+https://www.google.com/search?q=how+to+make+vegitarian+refried+beans
+
+
+`,
+		},
+		{
 			name: "Trim spaces in link names",
 			input: `
       [ Spaced  Link ](https://example.com)
