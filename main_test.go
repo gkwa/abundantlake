@@ -183,7 +183,7 @@ This is a 🌟 test. [They call this drug eggs in Korea because these are so add
       `,
 		},
 		{
-			name: "Bare link is wrapped as expected",
+			name: "Bare link is output as is without angle brackets like <https://a.com>",
 			input: `
 
 https://example.com
