@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"log"
 	"os/exec"
 	"strings"
 	"testing"
@@ -202,7 +203,6 @@ This is a 🌟 test. [They call this drug eggs in Korea because these are so add
 			name: "Typical markdown notes test",
 			input: `
 
-
 [[leadyspleen]]
 
 [Character encoding: iconv -t utf-8 input.txt | pandoc | iconv -f utf-8](https://pandoc.org/chunkedhtml-demo/2.3-character-encoding.html)
@@ -249,7 +249,6 @@ https://www.google.com/search?q=how+to+make+refried+beans
 https://www.google.com/search?q=how+to+make+vegitarian+refried+beans
 
 https://www.google.com/search?q=how+to+make+vegitarian+refried+beans
-
 
 `,
 		},
@@ -376,21 +375,14 @@ go test ./...
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			output, err := applyPandocFilter(tt.input, "remove_emphasis.lua")
+			output, err := applyPandocFilters(tt.input, []string{
+				"remove_emphasis.lua",
+				"remove_emoji.lua",
+				"trim_link_names.lua",
+				"link.lua",
+			})
 			if err != nil {
-				t.Fatalf("failed to apply Pandoc filter for test '%s': %v", tt.name, err)
-			}
-			output, err = applyPandocFilter(output, "remove_emoji.lua")
-			if err != nil {
-				t.Fatalf("failed to apply Pandoc filter for test '%s': %v", tt.name, err)
-			}
-			output, err = applyPandocFilter(output, "trim_link_names.lua")
-			if err != nil {
-				t.Fatalf("failed to apply Pandoc filter for test '%s': %v", tt.name, err)
-			}
-			output, err = applyPandocFilter(output, "link.lua")
-			if err != nil {
-				t.Fatalf("failed to apply Pandoc filter for test '%s': %v", tt.name, err)
+				t.Fatalf("failed to apply Pandoc filters for test '%s': %v", tt.name, err)
 			}
 
 			output = strings.ReplaceAll(output, "\\|", "|")
@@ -403,14 +395,21 @@ go test ./...
 	}
 }
 
-func applyPandocFilter(input, filterPath string) (string, error) {
-	cmd := exec.Command(
-		"pandoc",
+func applyPandocFilters(input string, filterPaths []string) (string, error) {
+	args := []string{
 		"--wrap=none",
 		"--from=gfm+wikilinks_title_after_pipe",
 		"--to=gfm+wikilinks_title_after_pipe",
-		"--lua-filter="+filterPath,
-	)
+	}
+
+	for _, filterPath := range filterPaths {
+		args = append(args, "--lua-filter="+filterPath)
+	}
+
+	cmd := exec.Command("pandoc", args...)
+
+	// Log the Pandoc CLI command being run
+	log.Printf("Running Pandoc command: pandoc %s", strings.Join(args, " "))
 
 	cmd.Stdin = strings.NewReader(strings.TrimSpace(input))
 	var out, errOut bytes.Buffer

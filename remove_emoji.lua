@@ -2,22 +2,25 @@ function Link(el)
     local new_content = {}
     for _, item in ipairs(el.content) do
         if item.t == "Str" then
-            local new_text = item.text:gsub("[%s\xC2-\xF4][\x80-\xBF]*", function(c)
-                local trimmed = c:gsub("^%s+", ""):gsub("%s+$", "")
-                if trimmed:match("^[\xC2-\xF4][\x80-\xBF]+$") then
-                    local code_point = utf8_to_codepoint(trimmed)
+            local new_text = item.text:gsub("([%s\xC2-\xF4][\x80-\xBF]*)", function(c)
+                if c:match("^[\xC2-\xF4][\x80-\xBF]+$") then
+                    local code_point = utf8_to_codepoint(c)
                     if is_emoji(code_point) then
                         return ""
                     else
-                        return trimmed
+                        return c
                     end
                 else
-                    return trimmed
+                    return c
                 end
             end)
-            new_text = new_text:gsub("%s+", " "):gsub("%s+$", "")
+            new_text = new_text:gsub("%s+", " "):gsub("^%s", ""):gsub("%s$", "")
             if new_text ~= "" then
                 table.insert(new_content, pandoc.Str(new_text))
+            end
+        elseif item.t == "Space" then
+            if #new_content > 0 and new_content[#new_content].t ~= "Space" then
+                table.insert(new_content, item)
             end
         else
             table.insert(new_content, item)
