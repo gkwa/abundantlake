@@ -48,10 +48,13 @@ func TestPandocFilters(t *testing.T) {
 		{
 			name: "RemoveEmphasisFromLink 2",
 			input: `
-I like [**Google** Search](https://google.com)`,
+
+			I like [**Google** Search](https://google.com)`,
 			expected: `
-I like [Google Search](https://google.com)
-`,
+
+			I like [Google Search](https://google.com)
+
+			`,
 			filters: commonFilters,
 		},
 		{
