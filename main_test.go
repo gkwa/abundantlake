@@ -137,15 +137,19 @@ I like [Google Search](https://google.com)
 		{
 			name: "Remove emojis from link text only",
 			input: `
-      
-      Check out this 😀 [😀 Awesome 🎉 Link 🌟](https://example.com) 🎉
+
+Check out this 😀 [😀 Awesome 🎉 Link 🌟](https://example.com) 🎉
+
+[The BEST ways to make Gai Lan👌 + 2 Quick & Easy Stir Fry Chinese Broccoli Recipes - YouTube](https://www.youtube.com/watch?v=GQ7-tjp7wnA)
 
       `,
 			expected: `
       
 Check out this 😀 [Awesome Link](https://example.com) 🎉
-      
-      `,
+
+[The BEST ways to make Gai Lan + 2 Quick & Easy Stir Fry Chinese Broccoli Recipes - YouTube](https://www.youtube.com/watch?v=GQ7-tjp7wnA)
+
+`,
 		},
 		{
 			name: "Remove multiple emojis from link text only",
@@ -426,11 +430,11 @@ func generateDiff(input, expected, actual string) string {
 	diffs1 := dmp.DiffMain(input, expected, false)
 	diffs2 := dmp.DiffMain(input, actual, false)
 	var result strings.Builder
-	result.WriteString("Input:    ")
+	result.WriteString("Input:\n")
 	result.WriteString(visualizeInvisibles(dmp.DiffText1(diffs1)))
-	result.WriteString("\nExpected: ")
+	result.WriteString("\nExpected:\n")
 	result.WriteString(visualizeInvisibles(dmp.DiffText2(diffs1)))
-	result.WriteString("\nActual:   ")
+	result.WriteString("\nActual:\n")
 	result.WriteString(visualizeInvisibles(dmp.DiffText2(diffs2)))
 	return result.String()
 }
