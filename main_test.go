@@ -11,11 +11,19 @@ import (
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 
+var commonFilters = []string{
+	"remove_emphasis.lua",
+	"remove_emoji.lua",
+	"trim_link_names.lua",
+	"link.lua",
+}
+
 func TestPandocFilters(t *testing.T) {
 	tests := []struct {
 		name     string
 		input    string
 		expected string
+		filters  []string
 	}{
 		{
 			name: "RemoveEmphasisFromLink",
@@ -29,11 +37,13 @@ func TestPandocFilters(t *testing.T) {
 			I like [Google Search](https://google.com)
 			
 			`,
+			filters: commonFilters,
 		},
 		{
 			name:     "Multiple spaces are squeezed",
 			input:    `I like ice  cream`,
 			expected: `I like ice cream`,
+			filters:  commonFilters,
 		},
 		{
 			name: "RemoveEmphasisFromLink 2",
@@ -42,6 +52,7 @@ I like [**Google** Search](https://google.com)`,
 			expected: `
 I like [Google Search](https://google.com)
 `,
+			filters: commonFilters,
 		},
 		{
 			name: "Bulleted list alongside some links",
@@ -55,6 +66,7 @@ lorum ipsum lorum ipsum lorum ipsum lorum ipsum lorum ipsum
 
 I like [Google Search](https://google.com)
 `,
+			filters: commonFilters,
 		},
 		{
 			name: "Links with aliases",
@@ -68,6 +80,7 @@ I like [Google Search](https://google.com)
       [a | b](https://a.com/b)
 
       `,
+			filters: commonFilters,
 		},
 		{
 			name: "Links with aliases and emphasis on name",
@@ -81,6 +94,7 @@ I like [Google Search](https://google.com)
       [a | b](https://a.com/b)
 
       `,
+			filters: commonFilters,
 		},
 		{
 			name: "Links with aliases and emphasis on name and alias",
@@ -94,6 +108,7 @@ I like [Google Search](https://google.com)
       [a | b](https://a.com/b)
 
       `,
+			filters: commonFilters,
 		},
 		{
 			name: "Italics are removed from name",
@@ -107,6 +122,7 @@ I like [Google Search](https://google.com)
       [Google Search](https://google.com)
 
       `,
+			filters: commonFilters,
 		},
 		{
 			name: "Italics are removed from alias",
@@ -120,6 +136,7 @@ I like [Google Search](https://google.com)
       [Google Search|GSearch](https://google.com)
 
       `,
+			filters: commonFilters,
 		},
 		{
 			name: "Italics are removed from name and alias",
@@ -133,6 +150,7 @@ I like [Google Search](https://google.com)
       [Google Search|GSearch](https://google.com)
 
       `,
+			filters: commonFilters,
 		},
 		{
 			name: "Remove emojis from link text only",
@@ -150,6 +168,7 @@ Check out this 😀 [Awesome Link](https://example.com) 🎉
 [The BEST ways to make Gai Lan + 2 Quick & Easy Stir Fry Chinese Broccoli Recipes - YouTube](https://www.youtube.com/watch?v=GQ7-tjp7wnA)
 
 `,
+			filters: commonFilters,
 		},
 		{
 			name: "Remove multiple emojis from link text only",
@@ -163,6 +182,7 @@ Check out this 😀 [Awesome Link](https://example.com) 🎉
 Check out this 😀 [Awesome Link and things](https://example.com) 🎉
       
       `,
+			filters: commonFilters,
 		},
 		{
 			name: "Remove multiple emojis from link text only 2",
@@ -176,6 +196,7 @@ Check out this 😀 [Awesome Link and things](https://example.com) 🎉
 [Testing in Go: Golden Files · Ilija Eftimov](https://ieftimov.com)
 
       `,
+			filters: commonFilters,
 		},
 		{
 			name: "Preserve emojis outside links",
@@ -189,6 +210,7 @@ This is a 🌟 test.  [They call this drug eggs in Korea because these are so ad
 This is a 🌟 test. [They call this drug eggs in Korea because these are so addictive!! Pt. 2 - YouTube](https://www.youtube.com/shorts/MBnJsEbDflA)
 
 `,
+			filters: commonFilters,
 		},
 		{
 			name: "Preserve emphasis outside links and clear within links",
@@ -202,6 +224,7 @@ This is a 🌟 test. [They call this drug eggs in Korea because these are so add
  		This is an **italics** test with [Some italics Link](https://example.com)
 
 `,
+			filters: commonFilters,
 		},
 		{
 			name: "Typical markdown notes test",
@@ -255,6 +278,7 @@ https://www.google.com/search?q=how+to+make+vegitarian+refried+beans
 https://www.google.com/search?q=how+to+make+vegitarian+refried+beans
 
 `,
+			filters: commonFilters,
 		},
 		{
 			name: "Trim spaces in link names",
@@ -264,6 +288,7 @@ https://www.google.com/search?q=how+to+make+vegitarian+refried+beans
 			expected: `
       [Spaced Link](https://example.com)
       `,
+			filters: commonFilters,
 		},
 		{
 			name: "Bare link is output as is without angle brackets like <https://a.com>",
@@ -277,6 +302,7 @@ https://example.com
 https://example.com
 
 `,
+			filters: commonFilters,
 		},
 
 		{
@@ -299,92 +325,43 @@ https://example.com
 [[xxx^section|alias]]			
 
 `,
+			filters: commonFilters,
 		},
 		{
-			name: "Code block",
-			input: `
-
-Usage:
-
-` + "```" + `bash
-git clone https://github.com/gkwa/abundantlake.git
-cd abundantlake
-go test ./...
-` + "```" + `
-
-`,
-			expected: `
-
-Usage:
-
-` + "``` " + `bash
-git clone https://github.com/gkwa/abundantlake.git
-cd abundantlake
-go test ./...
-` + "```" + `
-
-`,
+			name:     "Code block",
+			input:    "```bash\ngit clone https://github.com/gkwa/abundantlake.git\ncd abundantlake\ngo test ./...\n```",
+			expected: "``` bash\ngit clone https://github.com/gkwa/abundantlake.git\ncd abundantlake\ngo test ./...\n```",
+			filters:  commonFilters,
 		},
 		{
-			name: "Bare link is left alone inside code block",
-			input: `
-
-Usage:
-
-` + "```" + ` bash
-git clone https://github.com/gkwa/abundantlake.git
-` + "```" + `
-
-`,
-			expected: `
-
-Usage:
-
-` + "```" + ` bash
-git clone https://github.com/gkwa/abundantlake.git
-` + "```" + `
-
-`,
+			name:     "Bare link is left alone inside code block",
+			input:    "```bash\ngit clone https://github.com/gkwa/abundantlake.git\n```",
+			expected: "``` bash\ngit clone https://github.com/gkwa/abundantlake.git\n```",
+			filters:  commonFilters,
 		},
 		{
 			name: "Code block with link",
 			input: `
-
 [readme | **the** information source](https://readme.com)
 
 Usage:
 
-` + "```" + `bash
-git clone https://github.com/gkwa/abundantlake.git
-cd abundantlake
-go test ./...
-` + "```" + `
-
+` + "```bash\ngit clone https://github.com/gkwa/abundantlake.git\ncd abundantlake\ngo test ./...\n```" + `
 `,
 			expected: `
-
 [readme | the information source](https://readme.com)
 
 Usage:
 
-` + "``` " + `bash
-git clone https://github.com/gkwa/abundantlake.git
-cd abundantlake
-go test ./...
-` + "```" + `
-
+` + "``` bash\ngit clone https://github.com/gkwa/abundantlake.git\ncd abundantlake\ngo test ./...\n```" + `
 `,
+			filters: commonFilters,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			output, err := applyPandocFilters(tt.input, []string{
-				"remove_emphasis.lua",
-				"remove_emoji.lua",
-				"trim_link_names.lua",
-				"link.lua",
-			})
+			output, err := applyPandocFilters(tt.input, tt.filters)
 			if err != nil {
 				t.Fatalf("failed to apply Pandoc filters for test '%s': %v", tt.name, err)
 			}
@@ -412,7 +389,6 @@ func applyPandocFilters(input string, filterPaths []string) (string, error) {
 
 	cmd := exec.Command("pandoc", args...)
 
-	// Log the Pandoc CLI command being run
 	log.Printf("Running Pandoc command: pandoc %s", strings.Join(args, " "))
 
 	cmd.Stdin = strings.NewReader(strings.TrimSpace(input))
